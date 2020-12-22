@@ -1,0 +1,6 @@
+[submodule "third-party/hwnet"]
+	path = third-party/hwnet
+	url = git@github.com:jerinphilip/e2eEmbed.git
+[submodule "third-party/EAST"]
+	path = third-party/EAST
+	url = git@github.com:georg3tom/EAST.git
