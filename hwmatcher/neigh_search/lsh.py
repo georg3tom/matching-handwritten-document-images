@@ -44,9 +44,8 @@ class LSHIndex:
         acc /= pred.shape[0]
         return acc
 
-    def write(self, indexName="./index", labelName="./labels", objName="./obj.pkl"):
+    def write(self, indexName="./index", objName="./obj.pkl"):
         faiss.write_index(self.index, indexName)
-        np.save(labelName, self.labels)
         with open(objName, 'wb') as f:
             pickle.dump(self.obj, f, pickle.HIGHEST_PROTOCOL)
 

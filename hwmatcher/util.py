@@ -2,9 +2,9 @@ import os
 import sys
 import cv2
 from recordtype import recordtype
-from pathlib import Path
-import torch
 import matplotlib
+from PIL import Image, ImageFont, ImageDraw
+import numpy as np
 matplotlib.use("Agg")
 from matplotlib import pyplot as plt
 from matplotlib import patches
@@ -20,7 +20,6 @@ def add_paths():
 add_paths()
 from east import EASTWrapper
 from utils import HWNetInferenceEngine
-from neigh_search import LSHIndex as LSH, L2ExactIndex as L2
 
 
 class ComputeFeatures:
@@ -52,3 +51,47 @@ class ComputeFeatures:
         return a.features, a.bboxes
 
 
+def plot(bboxes, savePath=None, color='r'):
+    IMG_DIR = './images/'
+    obj = {}
+    images = []
+
+    for bbox in bboxes:
+        name = bbox[0]
+        if name not in obj:
+            obj[name] = []
+        obj[name].append(bbox[1])
+
+    for key, value in obj.items():
+        images.append(key)
+        img = cv2.imread(IMG_DIR+key)
+        plt.figure(figsize=(21, 15), dpi=300)
+        plt.imshow(img)
+        axes = plt.gca()
+        for bbox in value:
+            x, y, X, Y = (
+                    bbox['x'],
+                    bbox['y'],
+                    bbox['X'],
+                    bbox['Y']
+            )
+            rect = patches.Rectangle(
+                (x, y),
+                (X-x+1), (Y-y+1),
+                linewidth=1,
+                edgecolor=color,
+                facecolor='none'
+            )
+            axes.add_patch(rect)
+        if savePath:
+            plt.savefig(savePath + key)
+    return images
+
+
+def stringimage(string):
+    img = Image.new('RGB', (200, 100), color=(255, 255, 255))
+    draw = ImageDraw.Draw(img)
+    font = ImageFont.truetype("Comfortaa-Regular.ttf", 16)
+    draw.text((5, 5), string, font=font, align="center", fill= (0, 0, 0))
+    img = np.array(img)
+    return img
